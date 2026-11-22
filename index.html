@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0C18">
+<title>여덟 글자 — 내 사주를 가장 조용히 읽는 방법</title>
+<meta name="description" content="생년월일시 여덟 글자로 보는 사주. 만세력으로 계산한 사주 원국·십성·오행·신살과 대운·재물운·인연, 2027년 월별 흐름까지. 1분이면 끝나요.">
+<meta property="og:title" content="여덟 글자 — 내 사주를 가장 조용히 읽는 방법">
+<meta property="og:description" content="왜 나는 늘 같은 사람에게 끌릴까. 생년월일시 여덟 글자에 그 답이 적혀 있어요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0C18'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23D9C08C' font-family='serif'%3E%E5%85%AB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">八字</span>
+      <span class="brand__name">여덟 글자</span>
+    </div>
+    <span class="topbar__note" id="topbarNote">만세력 기반</span>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <p class="hero__eyebrow">사주 원국 · 십성 · 신살</p>
+      <h1 class="hero__title">왜 나는 늘<br>같은 사람에게<br><em>끌릴까</em></h1>
+      <p class="hero__sub">생년월일시 여덟 글자에 그 답이 적혀 있어요.<br>느낌이 아니라, 만세력으로 계산한 진짜 사주.</p>
+      <button class="btn btn--primary btn--wide" type="button" data-scroll="formCard">내 여덟 글자 보기</button>
+      <ul class="hero__meta">
+        <li>24절기 절입시각 반영</li>
+        <li>1900~2050</li>
+        <li>1분 소요</li>
+      </ul>
+    </section>
+
+    <!-- FORM -->
+    <section class="card form-card" id="formCard">
+      <div class="card__head">
+        <h3>내 사주 입력</h3>
+        <span class="card__hint">1분</span>
+      </div>
+
+      <form id="sajuForm" novalidate>
+        <div class="field">
+          <label class="field__label" for="nameInput">이름 <span>선택</span></label>
+          <input class="field__input" id="nameInput" type="text" maxlength="12" placeholder="부르고 싶은 이름 (없어도 돼요)" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <span class="field__label">성별</span>
+          <div class="seg seg--two" role="radiogroup" aria-label="성별">
+            <label class="seg__opt">
+              <input type="radio" name="gender" value="female" checked>
+              <span>여</span>
+            </label>
+            <label class="seg__opt">
+              <input type="radio" name="gender" value="male">
+              <span>남</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label">달력</span>
+          <div class="seg seg--two seg--cal" role="radiogroup" aria-label="달력">
+            <label class="seg__opt">
+              <input type="radio" name="calendar" value="solar" checked>
+              <span>양력</span>
+            </label>
+            <label class="seg__opt">
+              <input type="radio" name="calendar" value="lunar">
+              <span>음력</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label">생년월일</span>
+          <div class="field__row">
+            <select class="field__select" id="birthYear" aria-label="출생 연도"></select>
+            <select class="field__select" id="birthMonth" aria-label="출생 월"></select>
+            <select class="field__select" id="birthDay" aria-label="출생 일"></select>
+          </div>
+          <div class="leap" id="leapWrap" hidden>
+            <label class="check">
+              <input type="checkbox" id="isLeap">
+              <span>윤달이에요</span>
+            </label>
+            <span class="leap__hint" id="leapHint"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="birthHour">태어난 시간</label>
+          <select class="field__select field__select--full" id="birthHour" aria-label="태어난 시간"></select>
+          <div class="field__row" id="customTime" hidden>
+            <input class="field__input" id="hourInput" type="number" min="0" max="23" value="12" inputmode="numeric" aria-label="시">
+            <span class="field__unit">시</span>
+            <input class="field__input" id="minuteInput" type="number" min="0" max="59" value="0" inputmode="numeric" aria-label="분">
+            <span class="field__unit">분</span>
+          </div>
+          <p class="field__help">시간을 모르면 시주를 빼고 여섯 글자로 봐요. 정확한 시각을 넣을수록 정확해져요.</p>
+        </div>
+
+        <p class="form__error" id="formError" hidden></p>
+        <button class="btn btn--primary btn--wide" type="submit">사주 세우기</button>
+        <p class="form__fine">입력한 정보는 서버로 보내지 않아요. 계산은 이 브라우저 안에서 끝나요.</p>
+      </form>
+    </section>
+
+    <div class="loading" id="loading" hidden>
+      <div class="loading__dots"><i></i><i></i><i></i></div>
+      <p>만세력을 펼치는 중</p>
+      <span>절입시각 확인 → 원국 → 십성</span>
+    </div>
+
+    <!-- RESULT -->
+    <section id="result" hidden>
+      <div id="resultBody"></div>
+      <div class="result__actions">
+        <button class="btn btn--ghost" id="shareBtn" type="button">친구에게 보내기</button>
+        <button class="btn btn--ghost" id="againBtn" type="button">다른 사주 보기</button>
+      </div>
+    </section>
+
+    <!-- TRUST -->
+    <section class="trust">
+      <h3 class="trust__title">이 사주는 이렇게 계산했어요</h3>
+      <ul class="trust__list">
+        <li><b>입춘·12절 절입시각</b><span>년주는 입춘, 월주는 12절 기준. 태양 황경 15도 단위 실측값을 1분 단위로 반영했어요.</span></li>
+        <li><b>음양력 변환</b><span>한국천문연구원 역서 기반 데이터로 1900~2050년을 계산해요. 윤달도 구분해요.</span></li>
+        <li><b>일진 60갑자</b><span>율리우스적일 기반으로 계산해 1일 오차 없이 떨어져요.</span></li>
+        <li><b>십성·신살</b><span>일간을 기준으로 십성을 붙이고, 도화·홍염·역마·화개·천을귀인을 확인해요.</span></li>
+      </ul>
+    </section>
+
+    <section class="faq">
+      <h3 class="trust__title">자주 묻는 것</h3>
+      <details>
+        <summary>시간을 모르면 어떻게 되나요?</summary>
+        <p>시주 두 글자만 비고, 나머지 여섯 글자로 원국과 십성을 봐요. 다만 시주가 있어야 전체 균형이 정확해져요.</p>
+      </details>
+      <details>
+        <summary>같은 날 태어나도 사주가 다른가요?</summary>
+        <p>네. 태어난 시각과 절입시각 전후에 따라 월주와 시주가 달라져요. 2월 초·3월 초처럼 절입일 근처라면 시각이 중요해요.</p>
+      </details>
+      <details>
+        <summary>상세 리포트는 무엇이 다른가요?</summary>
+        <p>무료 결과는 원국과 성향까지예요. 상세 리포트는 10년 대운 흐름표, 재물 구조, 인연, 2027년 열두 달의 흐름, 개운 전략까지 계산해서 PDF로 드려요.</p>
+      </details>
+      <details>
+        <summary>결제는 어떻게 하나요?</summary>
+        <p id="faqPay">신청 안내에서 결제 수단을 고르고, 결제 후 받은 해금 코드를 넣으면 리포트가 바로 열려요.</p>
+      </details>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer__brand">八字 · 여덟 글자</p>
+    <p>재미와 자기 이해를 위한 풀이예요. 의료·투자·법률 판단의 근거로 쓰지 마세요.</p>
+    <p class="footer__copy">© 2026 여덟 글자</p>
+  </footer>
+</div>
+
+<!-- STICKY CTA -->
+<div class="sticky" id="stickyBar" hidden>
+  <div class="sticky__text">
+    <b>상세 리포트</b>
+    <span><s id="stickyListPrice">9,900원</s> <em id="stickyPrice">3,900원</em></span>
+  </div>
+  <button class="btn btn--gold" type="button" id="stickyCta">3,900원에 열기</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal__close" id="modalClose" type="button" aria-label="닫기">✕</button>
+    <p class="modal__eyebrow">상세 리포트</p>
+    <h3 class="modal__title" id="modalTitle">당신의 여덟 글자를<br>끝까지 읽어드릴게요</h3>
+    <ul class="modal__list">
+      <li>10년 대운 흐름표 · 지금 구간의 정밀 풀이</li>
+      <li>평생 재물운의 구조 — 모이는 곳과 새는 곳</li>
+      <li>연애·인연 — 붙는 사람, 피할 사람</li>
+      <li>2027 정미년 열두 달의 변수</li>
+      <li>개운 전략 — 색·물건·습관</li>
+    </ul>
+
+    <div class="modal__price">
+      <div class="price-anchor">
+        <span>정가 <s id="modalListPrice">9,900원</s></span>
+        <em id="modalDiscount">61% 할인</em>
+      </div>
+      <span class="modal__price-now" id="modalPrice">3,900원</span>
+      <span class="modal__price-note" id="modalPriceNote">런칭 특가 · 평생 소장</span>
+    </div>
+
+    <div class="modal__steps">
+      <p class="modal__step-title">신청 방법</p>
+      <ol id="paySteps">
+        <li>아래에서 결제 수단을 고르고 <b>3,900원</b>을 결제해요.</li>
+        <li>결제를 마치면 <b>해금 코드</b>가 발급돼요.</li>
+        <li>코드를 넣으면 리포트가 바로 열리고, PDF로도 저장할 수 있어요.</li>
+      </ol>
+    </div>
+
+    <div class="account" id="accountBox">
+      <div>
+        <p class="account__label" id="accountLabel">입금 계좌</p>
+        <p class="account__no" id="accountNo">카카오뱅크 000-0000-0000</p>
+        <p class="account__holder" id="accountHolder">예금주 · 여덟 글자</p>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="copyAccount" type="button">계좌 복사</button>
+    </div>
+
+    <a class="btn btn--primary btn--wide" id="payappBtn" hidden>페이앱으로 결제하기</a>
+    <a class="btn btn--ghost btn--wide" id="openChatBtn" href="#" data-open-chat="1">오픈채팅으로 신청하기</a>
+
+    <div class="unlock" id="unlockBox">
+      <button class="unlock__toggle" id="unlockToggle" type="button">이미 결제했어요 · 해금 코드 입력</button>
+      <div class="unlock__body" id="unlockBody" hidden>
+        <label class="unlock__label" for="unlockInput" id="unlockLabel">해금 코드</label>
+        <div class="unlock__row">
+          <input class="unlock__input" id="unlockInput" type="text" inputmode="text" autocomplete="one-time-code" placeholder="예: TEST3900">
+          <button class="btn btn--primary btn--sm" id="unlockBtn" type="button">열기</button>
+        </div>
+        <p class="unlock__msg" id="unlockMsg" hidden></p>
+        <button class="unlock__sample" id="sampleBtn" type="button">샘플 해금 미리보기</button>
+        <p class="unlock__help" id="unlockHelp">입금 후 오픈채팅으로 받은 코드를 넣어주세요.</p>
+      </div>
+    </div>
+
+    <p class="modal__fine" id="modalFine">코드를 받으면 바로 열람 · PDF로 저장 · 평생 소장</p>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div class="report" id="report" role="document" aria-label="상세 리포트" tabindex="-1" hidden>
+  <div class="report__bar">
+    <button class="report__back" id="reportClose" type="button">← 닫기</button>
+    <span class="report__brand">八字 · 상세 리포트</span>
+    <button class="report__print" id="reportPrint" type="button">PDF · 인쇄</button>
+  </div>
+  <div class="report__body" id="reportBody"></div>
+  <div class="report__foot">
+    <button class="btn btn--gold btn--wide" id="reportPrint2" type="button">PDF 저장 / 인쇄</button>
+    <button class="report__relock" id="reportRelock" type="button">테스트: 다시 잠그기</button>
+  </div>
+</div>
+
+<script src="js/calendar-data.js"></script>
+<script src="js/saju-engine.js"></script>
+<script src="js/content.js"></script>
+<script src="js/config.js"></script>
+<script src="js/report.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
