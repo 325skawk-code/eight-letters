@@ -28,7 +28,7 @@ saju-site/
 
 ---
 
-## 1. 인호가 채워야 하는 것 (`js/config.js`)
+## 1. 지금 들어가 있는 값 (`js/config.js`)
 
 ```js
 product: {
@@ -39,25 +39,26 @@ product: {
   focusYear: 2027       // 리포트의 월별 흐름 기준 연도
 },
 payment: {
-  bank: '카카오뱅크',
-  account: '000-0000-0000',   // ← 실제 계좌
-  holder: '예금주',            // ← 예금주
-  placeholder: true            // ← 실제 계좌 넣으면 false (테스트용 표시가 사라짐)
+  bank: '토스뱅크',
+  account: '1000-6806-0776',
+  holder: '강금성',
+  placeholder: false          // 실제 계좌가 들어가 있어 테스트용 표시가 없다
 },
-payappPaymentUrl: '',     // ← 페이앱 결제 링크. 넣으면 모달 주 버튼이 '페이앱으로 결제하기'로 바뀜
+payappPaymentUrl: '',     // 비어 있어 계좌이체 + 오픈채팅 안내가 나간다
 openChat: {
-  url: '',                // ← https://open.kakao.com/o/.... 넣으면 버튼이 실제 링크로 연결
+  url: 'https://open.kakao.com/o/sm31IiYi',
   label: '오픈채팅으로 신청하기'
 },
 unlock: {
-  codes: ['TEST3900'],    // ← 실사용 해금 코드 추가
-  tokens: [],             // 페이앱 토큰을 쓰려면 여기에 (아래 4번 설명 참고)
-  sampleEnabled: true     // 검수 끝나면 false (샘플 버튼·다시 잠그기 숨김)
+  codes: ['EIGHT3900', 'TEST3900'],  // EIGHT3900 = 판매용, TEST3900 = 검수용
+  tokens: [],
+  sampleEnabled: false     // 검수가 끝나 샘플 버튼·다시 잠그기 숨김
 }
 ```
 
 가격 문구는 전부 위 숫자에서 자동으로 만들어져요. 정가를 바꾸면 모달·CTA·스티키 바의
-취소선 가격과 할인율이 같이 바뀝니다.
+취소선 가격과 할인율이 같이 바뀝니다. 검수용 코드는 `TEST3900`이고, 이 코드는 화면 어디에도
+적혀 있지 않아요(예전에는 입력창 예시 문구에 노출되어 있었음).
 
 ---
 
@@ -173,11 +174,10 @@ python3 tools/capture_preview.py     # preview/ 에 390px 스크린샷 + 19-리�
 - **Netlify / Cloudflare Pages**: 폴더 드래그 또는 `netlify deploy --prod --dir saju-site`
 - **Vercel**: `vercel --prod saju-site`
 
-배포 후 할 일
+배포 후 남은 일
 - OG 이미지(1200×630) 추가 — 지금은 텍스트 메타만 있음
-- 페이앱 링크·계좌·오픈채팅 링크를 `config.js`에 실제 값으로 교체
-- `unlock.sampleEnabled: false` (샘플 버튼과 '다시 잠그기' 숨김)
 - 개인정보처리방침 페이지, 사업자(통신판매업) 신고
+- 개운 아이템 카드의 `추천 아이템 보기` 링크 — 지금은 `href="#"` 자리만 있고 문구도 '제휴 링크 자리'로 남아 있음
 
 ---
 

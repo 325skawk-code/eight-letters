@@ -298,9 +298,10 @@
     var strongTxt = e.strongest.map(function (i) { return C.ELEM_META[i].ko; }).join('·');
     var weakIdx = e.missing.length ? e.missing : e.weakest;
     var weakTxt = weakIdx.map(function (i) { return C.ELEM_META[i].ko; }).join('·');
+    var charTxt = e.total === 8 ? '여덟 글자' : '여섯 글자';
     var summary = e.missing.length
-      ? '가장 강한 기운은 <b>' + strongTxt + '</b>, <b>' + weakTxt + '</b>' + part(weakTxt, '은', '는') + ' 여덟 글자에 아예 없어요.'
-      : '가장 강한 기운은 <b>' + strongTxt + '</b>, 가장 약한 기운은 <b>' + weakTxt + '</b>예요.';
+      ? '가장 강한 기운은 <b>' + strongTxt + '</b>, <b>' + weakTxt + '</b>' + part(weakTxt, '은', '는') + ' ' + charTxt + '에 아예 없어요.'
+      : '가장 강한 기운은 <b>' + strongTxt + '</b>, 가장 약한 기운은 <b>' + weakTxt + '</b>' + part(weakTxt, '이에요', '예요') + '.';
     return '<ul class="el-list">' + rows + '</ul>' +
       '<p class="el-summary">' + summary + ' ' +
       (e.total === 6 ? '시주를 모르니 여섯 글자로만 봤어요.' : '여덟 글자 전체를 기준으로 봤어요.') + '</p>';

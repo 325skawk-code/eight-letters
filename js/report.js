@@ -665,7 +665,7 @@
     var weakKo = (el.missing.length ? el.missing : el.weakest).map(elKo).join('·');
 
     return '<div class="rp-card">' +
-      '<p class="rp-lead">일간은 ' + st.han + '(' + st.ko + '), ' + esc(stemP.image) + '이에요. ' + esc(stemP.personality[0]) + '</p>' +
+      '<p class="rp-lead">일간은 ' + st.han + '(' + st.ko + '), ' + esc(stemP.image) + part(stemP.image, '이에요', '예요') + '. ' + esc(stemP.personality[0]) + '</p>' +
       '<div class="rp-kv">' +
       kv('중심 십성', m.sipsung.dominant.join('·'), (m.hourKnown ? '여덟' : '여섯') + ' 글자에서 가장 많은 기운') +
       kv('강한 오행', strongKo, '이미 넘치는 쪽') +
