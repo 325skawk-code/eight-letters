@@ -31,6 +31,16 @@
   function two(n) { return n < 10 ? '0' + n : '' + n; }
   function price(n) { return CFG.fmtPrice(n); }
 
+  /* 받침에 따라 조사를 고른다: josa('금','은','는') → '금은' */
+  function part(word, withFinal, withoutFinal) {
+    var c = String(word).charCodeAt(String(word).length - 1);
+    var batchim = (c - 0xAC00) % 28 !== 0;
+    return batchim ? withFinal : withoutFinal;
+  }
+  function josa(word, withFinal, withoutFinal) {
+    return word + part(word, withFinal, withoutFinal);
+  }
+
   /* ---------- 잠금 상태 ---------- */
   function readUnlock() {
     try { return localStorage.getItem(CFG.unlock.storageKey) === '1'; } catch (e) { return false; }
@@ -289,7 +299,7 @@
     var weakIdx = e.missing.length ? e.missing : e.weakest;
     var weakTxt = weakIdx.map(function (i) { return C.ELEM_META[i].ko; }).join('·');
     var summary = e.missing.length
-      ? '가장 강한 기운은 <b>' + strongTxt + '</b>, <b>' + weakTxt + '</b>는 여덟 글자에 아예 없어요.'
+      ? '가장 강한 기운은 <b>' + strongTxt + '</b>, <b>' + weakTxt + '</b>' + part(weakTxt, '은', '는') + ' 여덟 글자에 아예 없어요.'
       : '가장 강한 기운은 <b>' + strongTxt + '</b>, 가장 약한 기운은 <b>' + weakTxt + '</b>예요.';
     return '<ul class="el-list">' + rows + '</ul>' +
       '<p class="el-summary">' + summary + ' ' +
@@ -448,8 +458,6 @@
       '<div class="card__head"><h3>끌리는 사람, 끌리는 이유</h3><span class="card__hint">연애</span></div>' +
       '<p class="label-inline">나에게 끌리는 유형</p>' +
       '<p class="body-text">' + esc(dbg.who) + '</p>' +
-      '<p class="label-inline">연애할 때 나는</p>' +
-      '<p class="body-text">' + esc(dbg.style) + '</p>' +
       '<p class="label-inline">조심할 것</p>' +
       '<p class="body-text">' + esc(dbg.caution) + '</p>' +
       '<div class="teaser-lock">' +
@@ -473,6 +481,12 @@
       '<p class="body-text">' + esc(t2027.body) + '</p>' +
       '</section>' +
 
+      '<section class="card">' +
+      '<div class="card__head"><h3>부족한 기운 채우기</h3><span class="card__hint">개운</span></div>' +
+      '<p class="body-text body-text--dim">사주에 없는 기운은 생활에서 조금씩 보태면 돼요. 큰 걸 바꾸지 않아도, 색과 물건 하나로 시작할 수 있어요.</p>' +
+      '<div class="goods-grid">' + renderRemedy(res) + '</div>' +
+      '</section>' +
+
       '<section class="upsell" id="upsell">' +
       '<p class="upsell__eyebrow">여기까지가 맛보기</p>' +
       '<h3 class="upsell__title">당신이 진짜<br>궁금해할 것들</h3>' +
@@ -483,12 +497,6 @@
       (state.unlocked ? '상세 리포트 열기' : esc(CFG.product.cta) + ' · ' + esc(CFG.product.priceTag) + ' ' + esc(CFG.priceLabel)) +
       '</button>' +
       '<p class="upsell__fine">' + esc(CFG.product.delivery) + ' · 평생 소장</p>' +
-      '</section>' +
-
-      '<section class="card">' +
-      '<div class="card__head"><h3>부족한 기운 채우기</h3><span class="card__hint">개운</span></div>' +
-      '<p class="body-text body-text--dim">사주에 없는 기운은 생활에서 조금씩 보태면 돼요. 큰 걸 바꾸지 않아도, 색과 물건 하나로 시작할 수 있어요.</p>' +
-      '<div class="goodsgird">' + renderRemedy(res) + '</div>' +
       '</section>' +
 
       '<section class="card card--note">' +
@@ -546,7 +554,7 @@
     var v = $('#unlockInput').value;
     if (codeMatches(v)) {
       writeUnlock(true);
-      unlockMsg('열렸어요. 리포트를 불러옵니다.', 'ok');
+      unlockMsg('열렸어요. 리포트를 불러올게요.', 'ok');
       closeModal();
       if (!state.result) {
         closeModal();

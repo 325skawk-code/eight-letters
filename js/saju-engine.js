@@ -425,7 +425,7 @@
     return false;
   }
 
-  /** 두 지지的关系 목록. 예: ['충'], ['육합','형'] */
+  /** 두 지지 사이의 관계 목록. 예: ['충'], ['육합','형'] */
   function branchRelations(a, b) {
     var out = [];
     if (a === b && SELF_HYEONG.indexOf(a) >= 0) out.push('자형');
@@ -710,7 +710,7 @@
       p.stemEl = STEMS[p.stem].el;
       p.branchEl = BRANCHES[p.branch].el;
       p.stemGod = k === 'day' ? '일간' : tenGod(dayStem, p.stem);
-      p.branchGod = k === 'day' ? branchTenGod(dayStem, p.branch) : branchTenGod(dayStem, p.branch);
+      p.branchGod = branchTenGod(dayStem, p.branch);
     });
 
     var branchList = [];

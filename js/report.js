@@ -32,11 +32,15 @@
   function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
   function joinKo(a) { return a.join('·'); }
 
-  /* 받침에 따라 조사를 고른다: josa('오','이','가') → '오가' */
-  function josa(word, withFinal, withoutFinal) {
-    var c = word.charCodeAt(word.length - 1);
+  /* 받침에 따라 조사를 고른다: josa('오','이','가') → '오가', part('정재','으로','로') → '로' */
+  function part(word, withFinal, withoutFinal) {
+    var c = String(word).charCodeAt(String(word).length - 1);
     var batchim = (c - 0xAC00) % 28 !== 0;
-    return word + (batchim ? withFinal : withoutFinal);
+    return batchim ? withFinal : withoutFinal;
+  }
+
+  function josa(word, withFinal, withoutFinal) {
+    return word + part(word, withFinal, withoutFinal);
   }
 
   function natalBranches(res) {
@@ -55,16 +59,16 @@
 
   function strengthNote(level, grp) {
     if (level === '신강') {
-      if (grp === '관성' || grp === '재성') return '기운이 넘치는 사주라 이 10년의 압박은 충분히 버팁니다. 다만 사람을 밀어붙이는 방식은 반발을 부릅니다.';
-      if (grp === '식상' || grp === '비겁') return '넘치는 기운을 밖으로 빼야 편한 사주예요. 이 10년은 그게 자연스럽게 되는 구간입니다.';
+      if (grp === '관성' || grp === '재성') return '기운이 넘치는 사주라 이 10년의 압박은 충분히 버틸 만해요. 다만 사람을 밀어붙이는 방식은 반발을 불러요.';
+      if (grp === '식상' || grp === '비겁') return '넘치는 기운을 밖으로 빼야 편한 사주예요. 이 10년은 그게 자연스럽게 되는 구간이에요.';
       return '기운이 이미 넘치는데 채우기만 하는 구간이에요. 배우는 걸로 미루지 말고 하나를 결과로 꺼내세요.';
     }
     if (level === '신약') {
-      if (grp === '관성' || grp === '재성') return '받치는 기운이 얇은 사주라 이 10년의 책임은 몸에 무리가 됩니다. 잠과 식사를 일정하게 두는 게 실력이에요.';
+      if (grp === '관성' || grp === '재성') return '받치는 기운이 얇은 사주라 이 10년의 책임은 몸에 무리가 와요. 잠과 식사를 일정하게 두는 게 실력이에요.';
       if (grp === '식상' || grp === '비겁') return '내 기운을 더 빼는 구간이에요. 벌이기 전에 회복을 먼저 챙기세요.';
-      return '모자란 기운을 채워주는 구간이라 버티기 좋아요. 배운 걸 돈이 되는 형태로 바꾸는 작업이 필요합니다.';
+      return '모자란 기운을 채워주는 구간이라 버티기 좋아요. 배운 걸 돈이 되는 형태로 바꾸는 작업이 필요해요.';
     }
-    return '균형이 잡힌 사주라 이 10년의 흐름을 있는 그대로 쓸 수 있어요. 크게 흔들리지 않는 대신, 스스로 판을 키워야 합니다.';
+    return '균형이 잡힌 사주라 이 10년의 흐름을 있는 그대로 쓸 수 있어요. 크게 흔들리지 않는 대신, 스스로 판을 키워야 해요.';
   }
 
   /* ============================================================
@@ -141,19 +145,19 @@
     if (chung.length) {
       touch = {
         tone: 'care',
-        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 충(沖)합니다. ' +
+        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 충(沖)해요. ' +
           C.RELATION['충'].body[chung[0].pos] + '. 판이 한 번 바뀌는 지점이에요.'
       };
     } else if (yukhap.length) {
       touch = {
         tone: 'good',
-        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 붙습니다(육합). ' +
+        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 붙어요(육합). ' +
           C.RELATION['육합'].body[yukhap[0].pos] + '.'
       };
     } else if (hyeong.length) {
       touch = {
         tone: 'care',
-        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 ' + hyeong[0].rel + ' 관계로 엮입니다. ' +
+        text: '이 대운의 지지 ' + josa(brKo(cur.branch), '이', '가') + ' ' + names + '와 ' + (hyeong[0].rel === '해' ? '해(害)' : hyeong[0].rel) + ' 관계로 엮여요. ' +
           C.RELATION[hyeong[0].rel].body[hyeong[0].pos] + '.'
       };
     }
@@ -221,14 +225,14 @@
       var s = Engine.saeun(res.pillars.day.stem, y);
       var why = [];
       if (useSikSang) {
-        if (group(s.stemGod) === '식상') why.push(s.stemGod + '이 천간에 들어와 만든 것이 돈이 됩니다');
-        if (group(s.branchGod) === '식상') why.push(s.branchGod + '이 지지에 앉아 손이 바빠집니다');
+        if (group(s.stemGod) === '식상') why.push(s.stemGod + '이 천간에 들어와 만든 것이 돈이 돼요');
+        if (group(s.branchGod) === '식상') why.push(s.branchGod + '이 지지에 앉아 손이 바빠져요');
       } else {
-        if (group(s.stemGod) === '재성') why.push(s.stemGod + '이 천간에 들어옵니다');
-        if (group(s.branchGod) === '재성') why.push(s.branchGod + '이 지지에 앉습니다');
-        if (goHit.length && Engine.branchRelations(s.branch, goHit[0].idx).indexOf('충') >= 0) why.push('묶여 있던 재고가 열립니다');
+        if (group(s.stemGod) === '재성') why.push(s.stemGod + '이 천간에 들어와요');
+        if (group(s.branchGod) === '재성') why.push(s.branchGod + '이 지지에 앉아요');
+        if (goHit.length && Engine.branchRelations(s.branch, goHit[0].idx).indexOf('충') >= 0) why.push('묶여 있던 재고가 열려요');
         natal.forEach(function (b) {
-          if (Engine.branchRelations(s.branch, b.idx).indexOf('육합') >= 0 && b.el === wealthEl) why.push(b.label + '와 붙어 재성이 자리를 잡습니다');
+          if (Engine.branchRelations(s.branch, b.idx).indexOf('육합') >= 0 && b.el === wealthEl) why.push(b.label + '와 붙어 재성이 자리를 잡아요');
         });
       }
       if (why.length) years.push({ year: y, ganzhi: s.ganzhi, why: uniq(why) });
@@ -239,19 +243,19 @@
     /* 새는 지점 */
     var leaks = [];
     if (tally['비겁'] >= 2) leaks.push('사람에게 나가는 돈 — 빌려주는 돈, 같이 쓰는 돈, 눈치 보여 내는 돈');
-    if (items.length && !rooted) leaks.push('들어와도 머물지 않는 돈 — 뿌리가 없어 생활비로 바로 풀립니다');
-    if (items.length >= 2 && tally['식상'] === 0) leaks.push('벌이는 있는데 만들어내는 힘이 없어, 다음 수입이 끊기면 그대로 줄어듭니다');
-    if (tally['인성'] >= 3 && items.length <= 1) leaks.push('준비만 하다 결실이 늦어지는 돈 — 공부와 계획에 쓴 시간이 수입으로 안 바뀝니다');
-    if (!leaks.length) leaks.push('크게 새는 구멍은 없어요. 대신 굳히는 힘이 약해서 모은 돈이 생활로 조금씩 풀립니다');
+    if (items.length && !rooted) leaks.push('들어와도 머물지 않는 돈 — 뿌리가 없어 생활비로 바로 풀려요');
+    if (items.length >= 2 && tally['식상'] === 0) leaks.push('벌이는 있는데 만들어내는 힘이 없어서, 다음 수입이 끊기면 그대로 줄어들어요');
+    if (tally['인성'] >= 3 && items.length <= 1) leaks.push('준비만 하다 결실이 늦어지는 돈 — 공부와 계획에 쓴 시간이 수입으로 안 바뀌어요');
+    if (!leaks.length) leaks.push('크게 새는 구멍은 없어요. 대신 굳히는 힘이 약해서 모은 돈이 생활로 조금씩 풀려요');
 
     var points = [];
-    if (tally['식상'] >= 1 && items.length >= 1) points.push('일한 만큼 바로 들어오는 구조 — 성과가 눈에 보이는 일에서 돈이 붙습니다');
-    if (items.length && rooted) points.push('재성에 뿌리가 있어 흔들려도 남는 돈 — 한 번 잡은 수입이 끊기지 않습니다');
-    if (tally['관성'] >= 2) points.push('자리와 자격을 통해 들어오는 돈 — 직책이 오르면 수입이 같이 올라갑니다');
-    if (items.length === 0 && tally['식상'] >= 2) points.push('만들어내는 힘이 곧 돈 — 재성이 없어도 이 힘이 수입을 만듭니다');
-    if (goHit.length && !goOpen) points.push('모아두는 힘 — 재고(' + brKo(goHit[0].idx) + ')가 닫혀 있어 급하게 쓰지 않고 쌓입니다');
-    if (goHit.length && goOpen) points.push('재고(' + brKo(goHit[0].idx) + ')가 열려 있어 한 번에 목돈이 들어오는 자리가 있습니다');
-    if (!points.length) points.push('한 우물을 오래 파는 방식 — 잔돈을 좇기보다 하나를 깊게 가는 쪽이 남습니다');
+    if (tally['식상'] >= 1 && items.length >= 1) points.push('일한 만큼 바로 들어오는 구조 — 성과가 눈에 보이는 일에서 돈이 붙어요');
+    if (items.length && rooted) points.push('재성에 뿌리가 있어 흔들려도 남는 돈 — 한 번 잡은 수입이 끊기지 않아요');
+    if (tally['관성'] >= 2) points.push('자리와 자격을 통해 들어오는 돈 — 직책이 오르면 수입이 같이 올라가요');
+    if (items.length === 0 && tally['식상'] >= 2) points.push('만들어내는 힘이 곧 돈 — 재성이 없어도 이 힘이 수입을 만들어요');
+    if (goHit.length && !goOpen) points.push('모아두는 힘 — 재고(' + brKo(goHit[0].idx) + ')가 닫혀 있어 급하게 쓰지 않고 쌓여요');
+    if (goHit.length && goOpen) points.push('재고(' + brKo(goHit[0].idx) + ')가 열려 있어 한 번에 목돈이 들어오는 자리가 있어요');
+    if (!points.length) points.push('한 우물을 오래 파는 방식 — 잔돈을 좇기보다 하나를 깊게 가는 쪽이 남아요');
 
     return {
       wealthEl: wealthEl,
@@ -271,10 +275,10 @@
       years: topYears,
       allYears: years,
       strengthLine: strength.level === '신강'
-        ? '기운이 강한 사주라 돈을 쥐는 힘은 있습니다. 문제는 쥔 돈을 놓지 않는 것보다, 쓸 때 확실히 쓰는 것입니다.'
+        ? '기운이 강한 사주라 돈을 쥐는 힘은 있어요. 문제는 쥔 돈을 놓을 때를 아는 것 — 쓸 곳에 확실히 쓰는 연습이 필요해요.'
         : strength.level === '신약'
-          ? '기운이 얇은 사주라 큰돈을 한 번에 밀어붙이면 몸이 먼저 상합니다. 작게 여러 번 들어오는 구조가 맞습니다.'
-          : '균형이 잡힌 사주라 버는 힘과 모으는 힘이 비슷합니다. 어느 한쪽으로 치우치지 않는 게 장점입니다.'
+          ? '기운이 얇은 사주라 큰돈을 한 번에 밀어붙이면 몸이 먼저 상해요. 작게 여러 번 들어오는 구조가 맞아요.'
+          : '균형이 잡힌 사주라 버는 힘과 모으는 힘이 비슷해요. 어느 한쪽으로 치우치지 않는 게 장점이에요.'
     };
   }
 
@@ -287,7 +291,7 @@
 
     var spouseText;
     if (items.length === 0) spouseText = C.LOVE.spouseNone;
-    else if (items.length === 1) spouseText = C.LOVE.spouseOne + ' ' + C.POSITION[items[0].pos] + '가 그 자리입니다.';
+    else if (items.length === 1) spouseText = C.LOVE.spouseOne + ' 이번 사주에서는 ' + C.POSITION[items[0].pos] + '에 앉아 있어요.';
     else spouseText = C.LOVE.spouseMany;
 
     /* 일지와 나머지 지지의 관계 */
@@ -409,7 +413,7 @@
         headline: (C.MONTH_GOD[m.branchGod] || C.MONTH_GROUP[grp]).head,
         body: C.MONTH_GROUP[grp].body,
         godLine: C.MONTH_GOD[m.branchGod] ? C.MONTH_GOD[m.branchGod].line : null,
-        stemLine: stemGrp !== grp ? ('겉으로는 ' + stemLabel(m.stemGod) + ' 쪽 일이 먼저 드러납니다.') : null,
+        stemLine: stemGrp !== grp ? ('겉으로는 ' + stemLabel(m.stemGod) + ' 쪽이 먼저 드러나요.') : null,
         primaryCare: care[0] || null,
         careSentence: care.length ? C.RELATION[care[0].rel].body[care[0].pos] : null,
         goodSentence: (!care.length && good.length) ? C.RELATION['육합'].body[good[0].pos] : null,
@@ -443,7 +447,7 @@
       if (money.length) {
         bits.push('돈이 움직이는 달은 ' + money.map(function (m) { return m.monthNo + '월'; }).join('·'));
         if (safeMoney.length && safeMoney.length !== money.length) {
-          bits.push('그중 ' + safeMoney.map(function (m) { return m.monthNo + '월'; }).join('·') + '은 부딪힘이 없어 결과가 남습니다');
+          bits.push('그중 ' + safeMoney.map(function (m) { return m.monthNo + '월'; }).join('·') + '은 부딪힘이 없어 결과가 남아요');
         } else if (!safeMoney.length) {
           bits.push('다만 그 달은 원국과 부딪혀 들어온 돈이 그대로 나가기 쉬워요');
         }
@@ -485,10 +489,10 @@
     var has = {};
     stems.forEach(function (s) { has[s.god] = true; });
     var out = [];
-    if (has['상관']) out.push('말로 관계를 좁힙니다');
-    if (has['편관']) out.push('관계를 통제하려 듭니다');
-    if (has['겁재']) out.push('내 몫을 나눠 갖으려 합니다');
-    if (!out.length) out.push('관계의 속도를 내 쪽으로 당깁니다');
+    if (has['상관']) out.push('말로 관계를 좁혀요');
+    if (has['편관']) out.push('관계를 통제하려 들어요');
+    if (has['겁재']) out.push('내 몫을 나눠 가지려 해요');
+    if (!out.length) out.push('관계의 속도를 내 쪽으로 당겨요');
     return out.join('. ') + '.';
   }
 
@@ -535,18 +539,18 @@
       var strongEl = strong[0];
       reduce = {
         ko: elKo(strongEl),
-        text: elKo(strongEl) + ' 기운이 넘치는 사주예요. 부족한 걸 채우는 것보다 넘치는 걸 덜어내는 쪽이 먼저입니다. ' +
-          elKo(strongEl) + ' 색과 소재를 줄이고, 소모를 견디는 대신 결과를 남기는 일에 힘을 쓰세요.'
+        text: elKo(strongEl) + ' 기운이 넘치는 사주예요. 부족한 걸 채우는 것보다 넘치는 걸 덜어내는 쪽이 먼저예요. ' +
+          elKo(strongEl) + ' 계열 색과 소재를 줄이고, 소모를 견디는 대신 결과를 남기는 일에 힘을 쓰세요.'
       };
     } else if (strength.level === '신약') {
       reduce = {
         ko: elKo(strength.supportEl),
-        text: '기운이 얇은 사주라 많이 벌이는 방식이 오래 못 갑니다. 일정을 절반으로 줄이고, 잠과 식사를 시간표에 넣는 게 실질적인 개운입니다.'
+        text: '기운이 얇은 사주라 많이 벌이는 방식이 오래 못 가요. 일정을 절반으로 줄이고, 잠과 식사를 시간표에 넣는 게 실질적인 개운이에요.'
       };
     } else {
       reduce = {
         ko: elKo(strong[0]),
-        text: '균형이 잡혀 있어 특별히 덜어낼 것은 없습니다. 다만 ' + elKo(strong[0]) + ' 쪽으로 기울면 판단이 빨라지면서 말이 세지니, 그때만 한 박자 늦추세요.'
+        text: '균형이 잡혀 있어 특별히 덜어낼 것은 없어요. 다만 ' + elKo(strong[0]) + ' 쪽으로 기울면 판단이 빨라지면서 말이 세지니, 그때만 한 박자 늦추세요.'
       };
     }
 
@@ -554,11 +558,11 @@
     if (model && model.daeun && model.daeun.current) {
       var grp = model.daeun.current.branchGroup;
       var fitMap = {
-        '비겁': '이 10년은 내 이름으로 서는 구간이에요. 개운 아이템도 남에게 보여주는 것보다 내가 매일 쓰는 물건이 낫습니다.',
-        '식상': '이 10년은 밖으로 꺼내는 구간이에요. 만들고 보여주는 일에 색을 입히면 훨씬 빨리 자리를 잡습니다.',
-        '재성': '이 10년은 돈이 붙는 구간이에요. 지갑·가방처럼 돈이 드나드는 물건을 새것으로 바꾸는 게 실제로 도움이 됩니다.',
+        '비겁': '이 10년은 내 이름으로 서는 구간이에요. 개운 아이템도 남에게 보여주는 것보다 내가 매일 쓰는 물건이 나아요.',
+        '식상': '이 10년은 밖으로 꺼내는 구간이에요. 만들고 보여주는 일에 색을 입히면 훨씬 빨리 자리를 잡아요.',
+        '재성': '이 10년은 돈이 붙는 구간이에요. 지갑·가방처럼 돈이 드나드는 물건을 새것으로 바꾸는 게 실제로 도움이 돼요.',
         '관성': '이 10년은 자리가 정해지는 구간이에요. 옷차림과 서류처럼 형식이 보이는 것부터 정리하세요.',
-        '인성': '이 10년은 채우는 구간이에요. 책과 공부 자리에 투자하는 색이 맞습니다.'
+        '인성': '이 10년은 채우는 구간이에요. 책과 공부 자리에 투자하는 색이 맞아요.'
       };
       fit = fitMap[grp] || null;
     }
@@ -590,8 +594,9 @@
       ' · ' + (m.gender === 'female' ? '여' : '남') +
       '</p>' +
       '<p class="rp-cover__lead">' + esc(stemP.tagline) + '. ' + (m.hourKnown ? '여덟' : '여섯') + ' 글자로 보면 ' +
-      esc(m.sipsung.dominant.join('·')) + '이 중심이고, ' +
-      elKo(m.elements.missing.length ? m.elements.missing[0] : m.elements.weakest[0]) + ' 기운이 비어 있어요.</p>' +
+      esc(m.sipsung.dominant.join('·')) + part(m.sipsung.dominant[0], '이', '가') + ' 중심이고, ' +
+      elKo(m.elements.missing.length ? m.elements.missing[0] : m.elements.weakest[0]) +
+      (m.elements.missing.length ? ' 기운이 비어 있어요.' : ' 기운이 가장 약해요.') + '</p>' +
       '<div class="rp-cover__tags">' +
       '<span>' + p.day.ganzhi + '일주</span>' +
       '<span>' + elHan(st.el) + ' ' + elKo(st.el) + ' 일간</span>' +
@@ -660,11 +665,11 @@
     var weakKo = (el.missing.length ? el.missing : el.weakest).map(elKo).join('·');
 
     return '<div class="rp-card">' +
-      '<p class="rp-lead">일간은 ' + st.han + '(' + st.ko + '), ' + esc(stemP.image) + '입니다. ' + esc(stemP.personality[0]) + '</p>' +
+      '<p class="rp-lead">일간은 ' + st.han + '(' + st.ko + '), ' + esc(stemP.image) + '이에요. ' + esc(stemP.personality[0]) + '</p>' +
       '<div class="rp-kv">' +
-      kv('중심 십성', m.sipsung.dominant.join('·'), '여덟 글자에서 가장 많은 기운') +
+      kv('중심 십성', m.sipsung.dominant.join('·'), (m.hourKnown ? '여덟' : '여섯') + ' 글자에서 가장 많은 기운') +
       kv('강한 오행', strongKo, '이미 넘치는 쪽') +
-      kv('빈 오행', weakKo, '생활에서 채워야 하는 쪽') +
+      kv(el.missing.length ? '빈 오행' : '약한 오행', weakKo, '생활에서 채워야 하는 쪽') +
       kv('신강·신약', m.strength.level + ' (' + m.strength.score + ')', '월령·통근을 점수화한 참고 지표') +
       '</div>' +
       '<p class="rp-note">' + esc(m.strength.marks.join(' · ')) + '.</p>' +
@@ -698,7 +703,7 @@
       '<ul class="rp-du__list">' +
       '<li class="rp-du rp-du--head"><span class="rp-du__age">나이</span><span class="rp-du__year">연도</span><span class="rp-du__gz">간지</span><span class="rp-du__god">천간/지지</span></li>' +
       rows + '</ul>' +
-      '<p class="rp-note">3일을 1년으로 환산한 표준 대운수 기준이에요. 나이는 만 나이입니다.</p>' +
+      '<p class="rp-note">3일을 1년으로 환산한 표준 대운수 기준이에요. 나이는 만 나이 기준이에요.</p>' +
       '</div>';
 
     h += '<div class="rp-card rp-card--accent">' +
@@ -736,9 +741,9 @@
       '<p class="rp-p">' + esc(w.pattern.body) + '</p>' +
       '<div class="rp-kv">' +
       kv('재성 자리', posText,
-        w.count === 0 ? '원국에 없어 결과로 따라옵니다' : (w.rooted ? '지지에 뿌리가 있음' : '지지에 뿌리가 없음')) +
+        w.count === 0 ? '원국에 없어 결과로 따라와요' : (w.rooted ? '지지에 뿌리가 있음' : '지지에 뿌리가 없음')) +
       (w.count === 0
-        ? kv('식상(대신 버는 힘)', w.tally['식상'] + '개', w.tally['식상'] ? '만든 것이 곧 수입이 되는 구조' : '만들어내는 힘이 얇아 사람을 통해 들어옵니다')
+        ? kv('식상(대신 버는 힘)', w.tally['식상'] + '개', w.tally['식상'] ? '만든 것이 곧 수입이 되는 구조' : '만들어내는 힘이 얇아 사람을 통해 들어와요')
         : kv('재고', w.goHit.length ? (w.goOpen ? '열려 있음' : '닫혀 있음') : '원국에 없음',
           w.goHit.length ? brKo(w.goHit[0].idx) + ' 자리' : '묶어두는 창고가 없어 흘러나감')) +
       kv('식상(재성의 엔진)', w.tally['식상'] + '개', w.tally['식상'] ? '일한 것이 돈이 되는 구조' : '만들어내는 힘이 얇음') +
@@ -782,7 +787,7 @@
         ? '<ul class="rp-list rp-list--tight">' + l.dayHits.map(function (h2) {
           return '<li><b>' + h2.label + ' ' + h2.rel + '</b> — ' + esc(C.RELATION[h2.rel].body[h2.pos]) + '</li>';
         }).join('') + '</ul>'
-        : '<p class="rp-p rp-p--dim">일지가 다른 지지와 부딪히지 않아요. 관계에서 큰 흔들림 없이 오래 가는 쪽입니다.</p>') +
+        : '<p class="rp-p rp-p--dim">일지가 다른 지지와 부딪히지 않아요. 관계에서 큰 흔들림 없이 오래 가는 쪽이에요.</p>') +
       '</div>';
 
     /* 귀인 */
@@ -790,17 +795,19 @@
     if (l.noble) {
       noble = '<p class="rp-p">천을귀인이 ' + esc(l.noble.join('·')) + '에 앉아 있어요. 막힐 때 도와주는 사람이 ' +
         (l.noble.indexOf('년지') >= 0 ? '가족·윗사람 쪽' : l.noble.indexOf('월지') >= 0 ? '직장·동료 쪽' : '가까운 사람 쪽') +
-        '에서 나옵니다.</p>';
+        '에서 나와요.</p>';
+    } else if (l.nobleYears.length) {
+      noble = '<p class="rp-p">천을귀인이 원국에는 없어요. 대신 귀인이 들어오는 해가 있어요 — ' +
+        l.nobleYears.slice(0, 3).join('·') + '년. 이 해에 만난 사람은 오래 가요.</p>';
     } else {
-      noble = '<p class="rp-p">천을귀인이 원국에는 없어요. 대신 귀인이 들어오는 해가 있습니다' +
-        (l.nobleYears.length ? ' — ' + l.nobleYears.slice(0, 3).join('·') + '년' : '') + '. 이 해에 만난 사람은 오래 갑니다.</p>';
+      noble = '<p class="rp-p">천을귀인이 원국에는 없어요. 앞으로 10년 안에 귀인이 뚜렷하게 들어오는 해도 보이지 않아요.</p>';
     }
 
     h += '<div class="rp-two">' +
       '<div class="rp-box rp-box--good"><span class="rp-box__label">' + esc(C.LOVE.goodTitle) + '</span>' +
       '<ul class="rp-list rp-list--tight">' +
-      l.goodBranches.map(function (b, bi) {
-        var tail = b.how === '육합' ? '육합 — 말이 통하는 자리' : (bi === 1 ? '삼합 — 판이 커지는 자리' : '삼합 — 같은 방향으로 힘이 모이는 자리');
+      l.goodBranches.map(function (b) {
+        var tail = b.how === '육합' ? '육합' : '삼합';
         return '<li><b>' + brKo(b.idx) + '(' + brAnimal(b.idx) + ') 일지</b> — ' + esc(b.why) + ' <em>(' + tail + ')</em></li>';
       }).join('') +
       l.goodStems.map(function (s) {
@@ -810,21 +817,21 @@
       '<div class="rp-box rp-box--care"><span class="rp-box__label">' + esc(C.LOVE.badTitle) + '</span>' +
       '<ul class="rp-list rp-list--tight">' +
       (l.badBranch !== null
-        ? '<li><b>' + brKo(l.badBranch) + '(' + brAnimal(l.badBranch) + ') 일지</b> — 일지 ' + dayKo + '와 정면으로 충합니다. 시작은 빠른데 같은 자리에서 계속 부딪혀요</li>'
+        ? '<li><b>' + brKo(l.badBranch) + '(' + brAnimal(l.badBranch) + ') 일지</b> — 일지 ' + josa(dayKo, '과', '와') + ' 정면으로 충해요. 시작은 빠른데 같은 자리에서 계속 부딪혀요</li>'
         : '') +
       l.badStems.map(function (s) {
         return '<li><b>' + stemKo(s.idx) + '</b> 일간 — ' + esc(josa(s.god, '으로', '로')) + ' 오는 사람. ' +
-          (s.god === '상관' ? '말이 세고 내 얘기를 자주 끊습니다' : s.god === '편관' ? '압박과 통제로 관계를 좁힙니다' : '내 것을 나눠 갖으려는 쪽입니다') + '</li>';
+          (s.god === '상관' ? '말이 세고 내 얘기를 자주 끊어요' : s.god === '편관' ? '압박과 통제로 관계를 좁혀요' : '내 것을 나눠 가지려는 쪽이에요') + '</li>';
       }).join('') +
       '</ul></div>' +
       '</div>';
 
     h += '<div class="rp-card">' + noble +
       (l.loveMonths.length
-        ? '<p class="rp-p rp-p--dim">' + m.focusYear + '년 안에서는 ' + l.loveMonths.map(function (x) { return x.month + '월'; }).join('·') +
-        '에 일지와 붙는 달이 와요. 인연이 움직이는 시기입니다.</p>'
+        ? '<p class="rp-p rp-p--dim">' + m.focusYear + '년에는 ' + l.loveMonths.map(function (x) { return x.month + '월'; }).join('·') +
+        '에 일지와 붙는 달이 있어요. 인연이 움직이는 시기예요.</p>'
         : '') +
-      '<p class="rp-note">상대의 일지·일간은 그 사람의 생년월일시로 확인하는 값이에요. 여기 적은 조합은 당신의 일지와 맞물리는 방식만 본 것입니다.</p>' +
+      '<p class="rp-note">상대의 일지·일간은 그 사람의 생년월일시로 확인하는 값이에요. 여기 적은 조합은 당신의 일지와 맞물리는 방식만 본 것이에요.</p>' +
       '</div>';
 
     return h;
@@ -852,7 +859,7 @@
 
     h += '<div class="rp-card">' +
       '<div class="rp-card__head"><h3>열두 달</h3><span>절기월 기준</span></div>' +
-      '<p class="rp-note rp-note--top">절기 기준이라 달력 월과 3~5일 차이가 나요. 각 달 옆에 시작일을 적었습니다.</p>' +
+      '<p class="rp-note rp-note--top">절기 기준이라 달력 월과 3~5일 차이가 나요. 각 달 옆에 시작일을 적었어요.</p>' +
       '<ul class="rp-months">' + y.months.map(function (mo) {
         return '<li class="rp-month' + (mo.hasChung ? ' is-care' : '') + '">' +
           '<div class="rp-month__date"><b>' + mo.monthNo + '월</b><span>' + esc(mo.startText) + '</span></div>' +
@@ -877,7 +884,7 @@
           return '<li><b>' + mo.monthNo + '월(' + mo.ganzhi + ')</b> — ' +
             esc(hit.label + ' ' + hit.rel) + '. ' + esc(C.RELATION[hit.rel].body[hit.pos]) + '.</li>';
         }).join('') + '</ul>' +
-        '<p class="rp-note">큰 결정은 이 달을 피해 한 주 뒤로 미루면 대체로 정리가 됩니다.</p></div>';
+        '<p class="rp-note">큰 결정은 이 달을 피해 한 주 뒤로 미루면 대체로 정리가 돼요.</p></div>';
     }
 
     if (y.moneyMonths.length) {
@@ -885,10 +892,10 @@
         '<div class="rp-card__head"><h3>돈이 움직이는 달</h3><span>재성이 겹치는 달</span></div>' +
         '<ul class="rp-list">' + y.moneyMonths.map(function (mo) {
           return '<li><b>' + mo.monthNo + '월(' + mo.ganzhi + ')</b> — 재성이 ' +
-            (mo.branchGrp === '재성' ? '지지에 앉습니다. ' : '천간으로 들어옵니다. ') +
+            (mo.branchGrp === '재성' ? '지지에 앉아요. ' : '천간으로 들어와요. ') +
             esc(mo.body) + '</li>';
         }).join('') + '</ul>' +
-        '<p class="rp-note">부딪히는 지지가 없는 달만 골랐어요. 돈이 오가는 일은 이 달에 맞추는 게 좋습니다.</p></div>';
+        '<p class="rp-note">부딪히는 지지가 없는 달만 골랐어요. 돈이 오가는 일은 이 달에 맞추는 게 좋아요.</p></div>';
     }
 
     return h;
@@ -900,7 +907,7 @@
     var h = '<div class="rp-card">' +
       '<p class="rp-card__kicker">부족한 ' + r.cards.map(function (c) { return c.ko; }).join('·') + ' 채우기</p>' +
       '<h3 class="rp-card__title">빈 곳은 색과 물건으로 천천히 채우면 돼요</h3>' +
-      '<p class="rp-p">사주에 없는 기운은 생활에서 조금씩 보태면 됩니다. 큰 걸 바꾸지 않아도 색 하나, 물건 하나로 시작할 수 있어요.</p>' +
+      '<p class="rp-p">사주에 없는 기운은 생활에서 조금씩 보태면 돼요. 큰 걸 바꾸지 않아도 색 하나, 물건 하나로 시작할 수 있어요.</p>' +
       '</div>';
 
     h += '<div class="rp-remedy">' + r.cards.map(function (c) {
@@ -929,13 +936,13 @@
     var p = m.pillars;
     return '<div class="rp-card rp-card--plain">' +
       '<ul class="rp-list rp-list--dim rp-list--tight">' +
-      '<li>년주는 입춘, 월주는 12절 절입시각을 기준으로 계산했어요. 절입시각은 태양 황경 15도 단위 실측값입니다.</li>' +
-      '<li>음양력 변환은 한국천문연구원 역서 기반 데이터(1900~2050)를 썼어요. 윤달도 구분합니다.</li>' +
-      '<li>일주는 율리우스적일 60갑자 순환, 시주는 12지시와 시두법 기준이에요. 자시는 야자시로 봤습니다.</li>' +
+      '<li>년주는 입춘, 월주는 12절 절입시각을 기준으로 계산했어요. 절입시각은 태양 황경 15도 단위 실측값이에요.</li>' +
+      '<li>음양력 변환은 한국천문연구원 역서 기반 데이터(1900~2050)를 썼어요. 윤달도 구분해요.</li>' +
+      '<li>일주는 율리우스적일 60갑자 순환, 시주는 12지시와 시두법 기준이에요. 자시는 야자시로 봤어요.</li>' +
       '<li>대운은 월주에서 ' + (m.daeun ? (m.daeun.forward ? '순행' : '역행') : '—') + '으로 10년씩 진행하고, 대운수는 3일을 1년으로 환산했어요.</li>' +
-      '<li>신강·신약은 월령 장악과 통근을 점수화한 참고 지표예요. 전통 간명의 정밀 판정을 대체하지 않습니다.</li>' +
+      '<li>신강·신약은 월령 장악과 통근을 점수화한 참고 지표예요. 전통 간명의 정밀 판정을 대체하지 않아요.</li>' +
       '<li>표준시(KST) 그대로 계산했고, 경도 보정과 서머타임은 적용하지 않았어요.</li>' +
-      '<li>이 리포트는 재미와 자기 이해를 위한 풀이입니다. 의료·투자·법률 판단의 근거로 쓰지 마세요.</li>' +
+      '<li>이 리포트는 재미와 자기 이해를 위한 풀이예요. 의료·투자·법률 판단의 근거로 쓰지 마세요.</li>' +
       '</ul>' +
       '<p class="rp-note">기준 · 양력 ' + m.solar.y + '. ' + m.solar.m + '. ' + m.solar.d +
       (m.hourKnown ? ' ' + two(m.hour.hh) + ':' + two(m.hour.mm) : ' 시간 모름') +
@@ -956,10 +963,10 @@
     var bits = [];
     if (w.count === 0) {
       bits.push('여덟 글자에 재성이 없어요.');
-      bits.push('돈을 직접 겨냥할 때 새고, 잘하는 일을 오래 할 때 통장이 따라오는 구조입니다.');
+      bits.push('돈을 직접 겨냥할 때 새고, 잘하는 일을 오래 할 때 통장이 따라오는 구조예요.');
     } else {
       bits.push('재성 ' + w.count + '개.');
-      bits.push(w.rooted ? '지지에 뿌리가 있어 흔들려도 남습니다.' : '지지에 뿌리가 없어 들어와도 머물지 않습니다.');
+      bits.push(w.rooted ? '지지에 뿌리가 있어 흔들려도 남아요.' : '지지에 뿌리가 없어 들어와도 머물지 않아요.');
       if (w.goHit.length) bits.push(w.goOpen ? '재고(' + brKo(w.goHit[0].idx) + ')가 열려 있어 목돈이 한 번에 들어오는 자리가 있어요.' : '재고(' + brKo(w.goHit[0].idx) + ')가 닫혀 있어 모아두는 구조예요.');
     }
     if (w.years.length) bits.push('트이는 해는 ' + w.years.map(function (a) { return a.year + '년'; }).join('·') + '.');
@@ -968,26 +975,27 @@
     /* 2. 인연 */
     var good = l.goodBranches[0];
     var loveBits = ['일지 ' + brKo(l.dayBranch) + '(' + brAnimal(l.dayBranch) + ').'];
-    if (good) loveBits.push(good.how + '하는 ' + brKo(good.idx) + '(' + brAnimal(good.idx) + ') 일지 — ' + good.why + '.');
+    if (good) loveBits.push(good.how + ' 상대는 ' + brKo(good.idx) + '(' + brAnimal(good.idx) + ') 일지 — ' + good.why + '.');
     if (l.badBranch !== null) loveBits.push('충하는 ' + brKo(l.badBranch) + '(' + brAnimal(l.badBranch) + ') 일지.');
-    loveBits.push(l.noble ? '귀인은 ' + l.noble.join('·') + '.' : (l.nobleYears.length ? '귀인이 들어오는 해는 ' + l.nobleYears.slice(0, 2).join('·') + '년.' : ''));
+    var nobleBit = l.noble ? '귀인은 ' + l.noble.join('·') + '.' : (l.nobleYears.length ? '귀인이 들어오는 해는 ' + l.nobleYears.slice(0, 2).join('·') + '년.' : '');
+    if (nobleBit) loveBits.push(nobleBit);
     out.push({ tag: '인연', title: '나와 붙는 사람, 부딪히는 사람', preview: loveBits.join(' ') });
 
     /* 3. 주의 */
     var watch = [];
-    if (l.badBranch !== null) watch.push('일지 ' + brKo(l.badBranch) + '(' + brAnimal(l.badBranch) + ')인 사람과는 같은 자리에서 계속 부딪힙니다.');
+    if (l.badBranch !== null) watch.push('일지 ' + brKo(l.badBranch) + '(' + brAnimal(l.badBranch) + ')인 사람과는 같은 자리에서 계속 부딪혀요.');
     if (l.badStems.length) {
       watch.push('일간이 ' + l.badStems.map(function (s) { return stemKo(s.idx) + '(' + s.god + ')'; }).join('·') +
         '인 사람 — ' + badEffect(l.badStems));
     }
-    if (!watch.length) watch.push('원국과 정면으로 부딪히는 일지가 없어요. 대신 ' + (l.spouseName === '관성' ? '관성' : '재성') + '이 약한 자리를 채워주는 사람이 오래 갑니다.');
+    if (!watch.length) watch.push('원국과 정면으로 부딪히는 일지가 없어요. 대신 ' + (l.spouseName === '관성' ? '관성' : '재성') + '이 약한 자리를 채워주는 사람이 오래 가요.');
     out.push({ tag: '주의', title: '피해야 할 인연의 사주 특징', preview: watch.join(' ') });
 
     /* 4. 2027 월별 */
     var mbits = [];
     if (y.moneyMonths.length) mbits.push('돈이 움직이는 달은 ' + y.moneyMonths.map(function (a) { return a.monthNo + '월'; }).join('·') + '.');
     if (y.careMonths.length) mbits.push('부딪히는 달은 ' + y.careMonths.map(function (a) { return a.monthNo + '월'; }).join('·') + '.');
-    mbits.push('이 해는 ' + y.ganzhi + '년, ' + y.stemGod + '/' + y.branchGod + '으로 들어옵니다.');
+    mbits.push('이 해는 ' + y.ganzhi + '년, ' + y.stemGod + '/' + y.branchGod + part(y.branchGod, '으로', '로') + ' 들어와요.');
     out.push({ tag: m.focusYear + ' 월별', title: m.focusYear + '년 열두 달의 흐름', preview: mbits.join(' ') });
 
     /* 5. 대운 */

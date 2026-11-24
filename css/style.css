@@ -855,7 +855,7 @@ h1, h2, h3, h4 { margin: 0; font-weight: 400; color: var(--ink); }
 }
 
 /* ---------- 개운 아이템 ---------- */
-.goodsgird { display: grid; gap: 10px; }
+.goods-grid { display: grid; gap: 10px; }
 
 .goods {
   padding: 16px;
