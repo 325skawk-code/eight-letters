@@ -225,15 +225,17 @@
       var s = Engine.saeun(res.pillars.day.stem, y);
       var why = [];
       if (useSikSang) {
-        if (group(s.stemGod) === '식상') why.push(s.stemGod + '이 천간에 들어와 만든 것이 돈이 돼요');
-        if (group(s.branchGod) === '식상') why.push(s.branchGod + '이 지지에 앉아 손이 바빠져요');
+        if (group(s.stemGod) === '식상') why.push(s.stemGod + part(s.stemGod, '이', '가') + ' 천간에 들어와 만든 것이 돈이 돼요');
+        if (group(s.branchGod) === '식상') why.push(s.branchGod + part(s.branchGod, '이', '가') + ' 지지에 앉아 손이 바빠져요');
       } else {
-        if (group(s.stemGod) === '재성') why.push(s.stemGod + '이 천간에 들어와요');
-        if (group(s.branchGod) === '재성') why.push(s.branchGod + '이 지지에 앉아요');
+        if (group(s.stemGod) === '재성') why.push(s.stemGod + part(s.stemGod, '이', '가') + ' 천간에 들어와요');
+        if (group(s.branchGod) === '재성') why.push(s.branchGod + part(s.branchGod, '이', '가') + ' 지지에 앉아요');
         if (goHit.length && Engine.branchRelations(s.branch, goHit[0].idx).indexOf('충') >= 0) why.push('묶여 있던 재고가 열려요');
+        var hapLabels = [];
         natal.forEach(function (b) {
-          if (Engine.branchRelations(s.branch, b.idx).indexOf('육합') >= 0 && b.el === wealthEl) why.push(b.label + '와 붙어 재성이 자리를 잡아요');
+          if (Engine.branchRelations(s.branch, b.idx).indexOf('육합') >= 0 && b.el === wealthEl) hapLabels.push(b.label);
         });
+        if (hapLabels.length) why.push(hapLabels.join('·') + '와 붙어 재성이 자리를 잡아요');
       }
       if (why.length) years.push({ year: y, ganzhi: s.ganzhi, why: uniq(why) });
     }
@@ -498,7 +500,7 @@
 
   function stemLabel(god) {
     var m = {
-      '비견': '내 일, 내 몫',
+      '비견': '내 일과 내 몫',
       '겁재': '경쟁과 사람',
       '식신': '먹고 즐기는 일',
       '상관': '말과 표현',
